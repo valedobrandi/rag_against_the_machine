@@ -7,7 +7,7 @@ from .chunker import RepositoryChunker
 from .retriever import BM25Retriever
 from .generator import AnswerGenerator
 from .models import StudentSearchResults, MinimalSearchResults, MinimalSource, DatasetRecallAtK, MinimalAnswer, StudentSearchResultsAndAnswer
-
+from concurrent.futures import ThreadPoolExecutor
 
 class RagCLI:
     def __init__(self):
@@ -149,34 +149,32 @@ class RagCLI:
         search_results_obj = StudentSearchResults(**search_data)
 
         generator = AnswerGenerator()
-        final_answers = []
+        answers = []
 
         print(f"Loaded {len(search_results_obj.search_results)} questions.")
 
-        for result in tqdm(search_results_obj.search_results, desc="Generating Answers"):
+        for result in tqdm(search_results_obj.search_results, desc="Generating answers"):
             retrieve_texts = self.__get_text_from_answer(result.retrieved_sources[:2])
-
+            
             generate_text = generator.generate_answer(
                 question=result.question,
                 retrieved_sources=retrieve_texts
             )
 
-            answer_obj = MinimalAnswer(
+            answers.append(MinimalAnswer(
                 question_id=result.question_id,
                 question=result.question,
                 retrieved_sources=result.retrieved_sources,
                 answer=generate_text
-            )
-
-            final_answers.append(answer_obj)
+            ))
 
         output_dataset = StudentSearchResultsAndAnswer(
-            search_results=final_answers,
+            search_results=answers,
             k=search_results_obj.k
         )
 
         save_path = Path(save_directory) / Path(student_search_results_path).name
-        save_path.parent.mkdir(parent=True, exist_ok=True)
+        save_path.parent.mkdir(parents=True, exist_ok=True)
 
         with open(save_path, "w") as f:
             f.write(output_dataset.model_dump_json(indent=4))

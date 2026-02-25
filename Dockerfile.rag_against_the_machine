@@ -3,11 +3,32 @@ FROM python:3.10-slim
 RUN apt-get update && apt-get install -y \
     curl \
     zsh \
+    zstd \
+    wget \
+    build-essential \
+    procps \
     && rm -rf /var/lib/apt/list/*
+
+
+# 2. Install UV (Modern Python manager)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 # Default powerline10k theme, no plugins installed
 RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.2.1/zsh-in-docker.sh)"
 
-WORKDIR /rag_against_the_machine
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    mv /root/.local/bin/uv /usr/local/bin/uv
+
+RUN curl -fsSL https://ollama.com/install.sh | sh
+
+ENV OLLAMA_NUM_PARALLEL=16
+ENV OLLAMA_MAX_LOADED_MODELS=1
+
+ENV PATH="/root/.local/bin:/app/.venv/bin:$PATH"
+
+WORKDIR /app
+
+COPY . .
+RUN uv sync
 
 CMD ["tail", "-f", "/dev/null"]
