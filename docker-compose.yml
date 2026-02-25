@@ -1,0 +1,17 @@
+services:
+  debian:
+    build: .
+    container_name: debian
+    privileged: true
+    volumes:
+      - .:/app
+    network_mode: host
+  rag_against_the_machine:
+    build:
+      context: .
+      dockerfile: Dockerfile.rag_against_the_machine
+    container_name: rag_against_the_machine
+    privileged: true
+    volumes:
+      - ./rag_against_the_machine:/rag_against_the_machine
+    network_mode: host

@@ -1,0 +1,13 @@
+FROM python:3.10-slim
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    zsh \
+    && rm -rf /var/lib/apt/list/*
+
+# Default powerline10k theme, no plugins installed
+RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.2.1/zsh-in-docker.sh)"
+
+WORKDIR /rag_against_the_machine
+
+CMD ["tail", "-f", "/dev/null"]
