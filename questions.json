@@ -1,0 +1,22 @@
+[
+  {
+    "question_id": 1,
+    "question_text": "How does PagedAttention work in vLLM, and what problem does it solve compared to standard attention?"
+  },
+  {
+    "question_id": 2,
+    "question_text": "How can vLLM be extended using CustomOp, and when should a CustomOp be used instead of built-in operators?"
+  },
+  {
+    "question_id": 3,
+    "question_text": "How does the vLLM plugin system work, and how are plugins loaded across distributed processes?"
+  },
+  {
+    "question_id": 4,
+    "question_text": "What are the main steps to run vLLM on AMD GPUs using ROCm, and what limitations or caveats exist?"
+  },
+  {
+    "question_id": 5,
+    "question_text": "How does vLLM handle batched inference efficiently, and what mechanisms ensure batch invariance or performance stability?"
+  }
+]
